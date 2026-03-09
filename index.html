@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provie</title>
+    <style>
+        button[onclick] {
+            position: relative;
+            overflow: hidden;
+            color: rgb(0, 0, 0);
+            font-weight: 600;
+            font-size: 18px;
+            width: 250px;
+            height: 50px;
+            border-radius: 8px;
+            margin: 2px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+
+            /* Đổ bóng: Ngang 0, Dọc 4px, Độ nhòe 15px, Màu đen trong suốt 30% */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+            /* Giúp chuyển động mượt mà khi nổi lên */
+            transition: all .3s ease-out;
+        }
+
+        button[onclick]::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+        }
+
+        button[onclick]:hover::after {
+            left: 120%;
+        }
+
+        button[onclick]:hover {
+            color: rgb(255, 255, 255);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.927);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        button[onclick]:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button.active {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6),
+                0 0 10px rgba(255, 255, 255, 0.4) !important;
+            border: 2px solid #ffffff !important;
+            transform: scale(1.05) !important;
+            pointer-events: none;
+            animation: pulse-white 2s infinite;
+        }
+
+        @keyframes pulse-white {
+            0% {
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+            }
+
+            100% {
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            }
+        }
+    </style>
+</head>
+
+<body style="background-image: url(/background.png); background-size: cover;">
+    <div style="display: flex; align-items: flex-start; margin-top: 20px;">
+        <video id="video" controls
+            style="flex: 4; border-radius: 12px; width: 100%; max-width: 1200px; margin-top: 10px;"></video>
+        <div style="display: flex; flex: 1; flex-direction: column; align-items: center; margin: 10px auto;">
+            <button onclick="doiPhim(0)">Tập 1</button>
+            <button onclick="doiPhim(1)">Tập 2</button>
+            <button onclick="doiPhim(2)">Tập 3</button>
+            <button onclick="doiPhim(3)">Tập 4</button>
+            <button onclick="doiPhim(4)">Tập 5</button>
+            <button onclick="doiPhim(5)">Tập 6</button>
+            <button onclick="doiPhim(6)">Tập 7</button>
+            <button onclick="doiPhim(7)">Tập 8</button>
+            <button onclick="doiPhim(8)">Tập 9</button>
+            <button onclick="doiPhim(9)">Tập 10</button>
+            <button onclick="doiPhim(10)">Tập 11</button>
+            <button onclick="doiPhim(11)">Tập 12</button>
+            <button onclick="doiPhim(12)">Tập 13</button>
+            <button onclick="doiPhim(13)">Tập 14</button>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        var video = document.getElementById('video');
+        var hls = new Hls();
+
+        var danhSachPhim = [
+            'https://s5.phim1280.tv/20241004/rahFfFK8/index.m3u8',
+            'https://s5.phim1280.tv/20241004/Pph2Zitf/index.m3u8',
+            'https://s5.phim1280.tv/20241004/NkoqW83L/index.m3u8',
+            'https://s5.phim1280.tv/20241004/cREPB8la/index.m3u8',
+            'https://s5.phim1280.tv/20241004/78ZMNLXP/index.m3u8',
+            'https://s5.phim1280.tv/20241004/UWyG0d3M/index.m3u8',
+            'https://s5.phim1280.tv/20241004/6VfMhS5d/index.m3u8',
+            'https://s5.phim1280.tv/20241004/Vo8sVSFy/index.m3u8',
+            'https://s5.phim1280.tv/20241004/f7BOhwL8/index.m3u8',
+            'https://s5.phim1280.tv/20241004/u5MUje9R/index.m3u8',
+            'https://s5.phim1280.tv/20241004/luncHS17/index.m3u8',
+            'https://s5.phim1280.tv/20241004/sKQ5thFi/index.m3u8',
+            'https://s5.phim1280.tv/20241004/BMjfQy6L/index.m3u8',
+            'https://s5.phim1280.tv/20241004/HazZuBAW/index.m3u8'
+        ];
+        let currentEpisode = 0;
+        function doiPhim(index) {
+            var linkMoi = danhSachPhim[index];
+            var tatCaButtons = document.querySelectorAll('button[onclick]');
+            tatCaButtons.forEach(btn => btn.classList.remove('active'));
+            tatCaButtons[index].classList.add('active');
+            localStorage.setItem('lastEpisode', index);
+            if (Hls.isSupported()) {
+                hls.loadSource(linkMoi);
+                currentEpisode = index;
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            }
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = linkMoi;
+                video.play();
+            }
+        }
+        video.addEventListener('ended', function () {
+            doiPhim(currentEpisode + 1);
+        });
+
+
+        window.onload = function () {
+            var savedEpisode = localStorage.getItem('lastEpisode');
+
+            if (savedEpisode !== null) {
+                doiPhim(parseInt(savedEpisode), false);
+                console.log("Đã khôi phục tập phim: " + (parseInt(savedEpisode) + 1));
+            } else {
+                doiPhim(0, false);
+            }
+        };
+    </script>
+
+</body>
+
+</html>
