@@ -26,8 +26,15 @@
             /* Đổ bóng: Ngang 0, Dọc 4px, Độ nhòe 15px, Màu đen trong suốt 30% */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 
-            /* Giúp chuyển động mượt mà khi nổi lên */
             transition: all .3s ease-out;
+
+            background: rgba(0, 0, 0, 0.489);
+            backdrop-filter: blur(15px);
+            padding: 12px 25px;
+            border-radius: 20px;
+            /* 2. Viền phát sáng nhẹ */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
         }
 
         button[onclick]::after {
@@ -83,6 +90,62 @@
                 box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
             }
         }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            /* 1. Nền tối hơn  */
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            padding: 12px 25px;
+            border-radius: 50px;
+            /* 2. Viền phát sáng nhẹ */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-top: 20px;
+            width: fit-content;
+            /* 3. Đổ bóng cực mạnh để tạo chiều sâu */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8),
+                0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Thanh trượt */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 160px;
+            height: 8px;
+            /* Màu nền thanh trượt tối hẳn xuống */
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        /* Nút kéo */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            /* Hiệu ứng tỏa sáng Neon */
+            box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.274);
+            border: 2px solid #000;
+            transition: 0.3s ease-in-out;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 25px #fff, 0 0 50px rgba(255, 255, 255, 0.8);
+            background: #ffffff;
+        }
+
+        #vol-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 
@@ -108,6 +171,13 @@
 
         </div>
     </div>
+    <div class="volume-container">
+        <span style="color: white; font-size: 14px; opacity: 0.8;">🔊 Boost</span>
+        <input type="range" min="1" max="10" step="0.1" value="1"
+            oninput="boostAudio(this.value); document.getElementById('vol-val').innerText = this.value + 'x'">
+
+        <span id="vol-val">1x</span>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
@@ -130,6 +200,47 @@
             'https://s5.phim1280.tv/20241004/BMjfQy6L/index.m3u8',
             'https://s5.phim1280.tv/20241004/HazZuBAW/index.m3u8'
         ];
+
+
+        var audioContext, source, gainNode;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                source = audioContext.createMediaElementSource(video);
+                gainNode = audioContext.createGain();
+
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+            }
+        }
+
+        // 2. Hàm thay đổi âm lượng
+        function boostAudio(level) {
+            initAudio(); 
+
+            // Ép kiểu về số để gainNode hiểu được
+            var vol = parseFloat(level) || 1;
+
+            // Cập nhật giá trị âm lượng
+            gainNode.gain.value = vol;
+
+            // Lưu vào máy người dùng
+            localStorage.setItem('lastVol', vol);
+        }
+
+        // 3. Khôi phục khi vừa tải trang
+        window.addEventListener('DOMContentLoaded', function () {
+            var savedVol = localStorage.getItem('lastVol');
+            if (savedVol) {
+                // Cập nhật số hiển thị và vị trí thanh trượt 
+                var slider = document.querySelector('input[type="range"]');
+                var display = document.getElementById('vol-val');
+
+                if (slider) slider.value = savedVol;
+                if (display) display.innerText = savedVol + 'x';
+            }
+        });
         let currentEpisode = 0;
         function doiPhim(index) {
             var linkMoi = danhSachPhim[index];
@@ -168,6 +279,5 @@
     </script>
 
 </body>
-
 
 </html>
