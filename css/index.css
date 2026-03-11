@@ -1,0 +1,483 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+button[onclick] {
+    position: relative;
+    overflow: hidden;
+    color: rgb(0, 0, 0);
+    font-weight: 600;
+    font-size: 18px;
+    width: 250px;
+    height: 50px;
+    border-radius: 8px;
+    margin: 2px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+
+    /* Đổ bóng: Ngang 0, Dọc 4px, Độ nhòe 15px, Màu đen trong suốt 30% */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+    transition: all .3s ease-out;
+
+    background: rgba(0, 0, 0, 0.489);
+    backdrop-filter: blur(15px);
+    padding: 12px 25px;
+    border-radius: 20px;
+    /* 2. Viền phát sáng nhẹ */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+button[onclick]::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(30deg);
+    transition: all 0.6s;
+}
+
+button[onclick]:hover::after {
+    left: 120%;
+}
+
+button[onclick]:hover {
+    color: rgb(255, 255, 255);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.927);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+button[onclick]:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+button.active {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #1a1a1a !important;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6),
+        0 0 10px rgba(255, 255, 255, 0.4) !important;
+    border: 2px solid #ffffff !important;
+    transform: scale(1.05) !important;
+    pointer-events: none;
+    animation: pulse-white 2s infinite;
+}
+
+@keyframes pulse-white {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+}
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* 1. Nền tối hơn  */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+    padding: 12px 25px;
+    border-radius: 50px;
+    /* 2. Viền phát sáng nhẹ */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    margin: 10px;
+    width: fit-content;
+    /* 3. Đổ bóng cực mạnh để tạo chiều sâu */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Thanh trượt */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 160px;
+    height: 8px;
+    /* Màu nền thanh trượt tối hẳn xuống */
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    outline: none;
+}
+
+/* Nút kéo */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    /* Hiệu ứng tỏa sáng Neon */
+    box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.274);
+    border: 2px solid #000;
+    transition: 0.3s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 25px #fff, 0 0 50px rgba(255, 255, 255, 0.8);
+    background: #ffffff;
+}
+
+#vol-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Container chứa danh sách tập */
+.episode-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Độ rộng cột danh sách */
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* Thẻ tập phim */
+.episode-card {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.409);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.episode-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 15px #3a3a3a, 0 0 30px rgba(255, 255, 255, 0.274);
+    transform: translateX(5px);
+    border-color: #fff;
+}
+
+.episode-card.active {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #fff;
+}
+
+.episode-card.active .ep-title,
+.episode-card.active .ep-duration {
+    color: #000;
+}
+
+/* Thumbnail */
+.ep-thumb-container {
+    position: relative;
+    width: 120px;
+    height: 68px;
+    flex-shrink: 0;
+}
+
+.ep-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.ep-duration {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff !important;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+/* Nội dung text */
+.ep-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ep-title {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Tùy chỉnh thanh cuộn cho danh sách tập */
+.episode-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.episode-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+/* Container chính của Nav */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(0, 0, 0, 0.4);
+    /* Nền tối trong suốt */
+    backdrop-filter: blur(20px);
+    /* Hiệu ứng kính mờ mạnh */
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    /* Viền dưới cực mỏng */
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Logo phong cách Neon */
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+        0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Các link điều hướng */
+.nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+.nav-links a {
+    position: relative;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+/* Hiệu ứng khi Hover vào Link */
+.nav-links a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 8px #fff;
+}
+
+/* Thanh gạch chân chạy hiệu ứng */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 10px #fff;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-links a:hover::after {
+    width: 70%;
+}
+
+/* Nút Premium hoặc Profile bên phải (Dùng lại style button của bạn) */
+.nav-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000 !important;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.nav-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+}
+
+#next-ep-popup {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 101;
+    display: none;
+    /* Ẩn mặc định */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+#main>div {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Container chứa Video và Volume */
+.video-wrapper {
+    position: relative;
+    flex: 8;
+    min-width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    /* Cắt bớt phần thừa của video */
+}
+
+/* Ép Volume Boost luôn nằm trên video */
+.volume-container {
+    position: absolute;
+    bottom: 10%;
+    /* Cách đáy video 80px để không che thanh công cụ */
+    left: 20px;
+    z-index: 100;
+    /* Luôn nằm trên cùng */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: auto;
+    /* Đảm bảo vẫn kéo được */
+}
+
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.select-trigger > span {
+    color: white;
+    font-weight: 800;
+}
+
+.select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Đẩy chữ sang trái, icon sang phải */
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.482);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Thêm icon mũi tên bằng SVG */
+.select-trigger::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.3s ease;
+}
+
+/* Xoay mũi tên khi mở menu */
+.custom-select.open .select-trigger::after {
+    transform: rotate(180deg);
+}
+
+.options {
+    display: none; /* Ẩn đi, chỉ hiện khi bấm vào trigger */
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    border-radius: 10px;
+    border: 1px solid #ffffff;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.option {
+    font-weight: 500;
+    padding: 12px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.option:hover {
+    background: #ff4654; /* Hover vào đổi màu đỏ cực đẹp */
+}
+
+/* Khi mở menu */
+.custom-select.open .options {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    .nav-links {
+        display: none;
+    }
+}
